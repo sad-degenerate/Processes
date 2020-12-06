@@ -6,15 +6,20 @@ namespace Processes.BL
 {
     public class OpenAtTime
     {
+        /// <summary>
+        /// Время, когда программа запускалась в последний раз.
+        /// </summary>
         public DateTime LastOpen { get; private set; }
+        /// <summary>
+        /// Путь к запускаемой программе.
+        /// </summary>
         public string Path { get; }
+
+        // Control, который отвечает за время запуска программы.
         public Timer Timer { get; private set; }
 
         public OpenAtTime(string path = "notepad.exe")
         {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentNullException(nameof(path), "Путь к файлу не может быть пустым.");
-
             Path = path;
         }
 
@@ -25,12 +30,16 @@ namespace Processes.BL
 
         private void SetUpTimer(TimeSpan time)
         {
+            // Текущее время.
             var currentTime = DateTime.Now;
+            // Время, которое будет действовать таймер.
             var timeToGo = time - currentTime.TimeOfDay;
 
+            // Проверка на отрицательное время.
             if (timeToGo < TimeSpan.Zero)
                 return;
 
+            // Создание таймера, по истечению которого будет открыта программа.
             Timer = new Timer(x =>
             {
                 OpenProgram();
@@ -39,6 +48,7 @@ namespace Processes.BL
 
         private void OpenProgram()
         {
+            // Открытие программы.
             Process.Start(Path);
             LastOpen = DateTime.Today;
         }
